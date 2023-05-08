@@ -1,0 +1,15 @@
+<div>
+  <form  [formGroup]="formdata" (ngSubmit)="onClickSubmit(formdata)" class="example-form" >
+    <mat-form-field>
+      <mat-label>Client ID</mat-label>
+      <input type="text" formControlName="clientId" matInput placeholder="c04864ce-f454-48e1-b41d-8730e575b905" value="" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Client Secret</mat-label>
+      <input type="password" formControlName="secretId" matInput placeholder="OpzHz4pn8D1frRrv5iDkIA==" value="" />
+    </mat-form-field>
+
+    <button type="submit" class="forsubmit" mat-raised-button color="primary">Send Data</button>
+  </form>
+</div>

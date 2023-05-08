@@ -1,0 +1,42 @@
+<form class="example-form">
+  <mat-grid-list cols="1 " rowHeight="5em">
+    <mat-grid-tile>
+      <mat-form-field>
+        <mat-label>RUC Emisor</mat-label>
+        <input matInput placeholder="20607095580" value="" />
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field >
+        <mat-label>Tipo de comprobante </mat-label>
+        <mat-select>
+          <mat-option value="one">Boleta de venta</mat-option>
+          <mat-option value="two">Second option</mat-option>
+          <mat-option value="two">Second option</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile><mat-form-field class="example-full-width">
+        <mat-label>Serie</mat-label>
+        <input matInput placeholder="BA01" value="" />
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field class="example-full-width">
+        <mat-label>Numero</mat-label>
+        <input matInput placeholder="1207642" value="" /> </mat-form-field></mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field class="example-full-width">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" />
+        <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+        <mat-datepicker-toggle matIconSuffix [for]="picker">
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <button mat-raised-button color="primary">Send Data</button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>
