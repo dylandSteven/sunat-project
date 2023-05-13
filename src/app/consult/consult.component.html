@@ -1,4 +1,4 @@
-<form class="example-form">
+<!-- <form class="example-form">
   <mat-grid-list cols="1 " rowHeight="5em">
     <mat-grid-tile>
       <mat-form-field>
@@ -29,7 +29,6 @@
       <mat-form-field class="example-full-width">
         <mat-label>Fecha</mat-label>
         <input matInput [matDatepicker]="picker" />
-        <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
         <mat-datepicker-toggle matIconSuffix [for]="picker">
         </mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
@@ -39,4 +38,14 @@
       <button mat-raised-button color="primary">Send Data</button>
     </mat-grid-tile>
   </mat-grid-list>
-</form>
+</form> -->
+
+<div class="Block">
+  <label id="lbl">Code </label>
+  <input accept=".txt" type="file" (change)="fileChanged($event)"/>
+</div>
+
+<div>
+  <h3>File Content</h3>
+  <pre>{{text}} </pre>
+</div>
