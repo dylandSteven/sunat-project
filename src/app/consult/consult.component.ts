@@ -39,6 +39,5 @@ export class ConsultComponent {
       this.consult.push(new Consult(newElement[10],newElement[5],newElement[6],newElement[2],newElement[3],newElement[24]))
     });
 
-    console.log(this.consult)
   }
 }
