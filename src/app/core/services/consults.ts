@@ -16,5 +16,4 @@ export class Consult
     this.importeTotal = importeTotal;
 
   }
-
 }
