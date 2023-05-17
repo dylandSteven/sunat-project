@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import {
   HttpClient,
   HttpErrorResponse,
@@ -6,20 +6,22 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-
+import { Data } from '@angular/router';
+import { Router } from '@angular/router';
+import { SharedService } from './sharedServices';
 @Injectable()
 export class SignInService {
   client_id: string = '9ccff3ee-5775-405b-9871-7f1c27ac24e5';
   client_secret: string = '';
   scope: string = 'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes';
   grant_type: string = 'client_credentials';
-  repos: any;
   configUrl =
     'https://api-seguridad.sunat.gob.pe/v1/clientesextranet/' +
     this.client_id +
     '/oauth2/token/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router,private shared:SharedService) {}
+  @Output() login = new EventEmitter<string>();
 
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
@@ -38,7 +40,7 @@ export class SignInService {
       () => new Error('Something bad happened; please try again later.')
     );
   }
-
+  @Output() token: EventEmitter<any> = new EventEmitter();
   getToken() {
     const body = new URLSearchParams();
     body.set('grant_type', 'client_credentials');
@@ -55,13 +57,18 @@ export class SignInService {
         'application/x-www-form-urlencoded'
       ),
     };
-
     return this.http
-      .post(this.configUrl, body, options)
+      .post<Data>(this.configUrl, body, options)
       .pipe(catchError(this.handleError))
-      .subscribe((data) => console.log(data));
+      .subscribe((data) => {
+        console.log(data['access_token']);
+        if (data['access_token']) {
+          this.login.emit(data['access_token']);
+          this.router.navigate(['consult'],{state:{data:data['access_token']}});
+          this.shared.setToken(data['access_token']);
+        }
+      });
   }
-
   getData(client_id: string, secret_id: string) {
     // this.client_id = client_id
     // this.client_secret = secret_id;
