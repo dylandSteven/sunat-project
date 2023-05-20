@@ -23,6 +23,17 @@ export class Consult {
   }
 
   getBody() {
+    return {
+      token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
+      tipo_comprobante: this.codComp,
+      serie: this.numeroSerie,
+      numero: this.numero,
+      fecha_emision: this.fechaEmision,
+      ruc_emisor: this.numRuc,
+      monto: this.monto,
+    };
+  }
+  getBody2() {
     return JSON.stringify({
       codComp: this.codComp,
       numeroSerie: this.numeroSerie,
