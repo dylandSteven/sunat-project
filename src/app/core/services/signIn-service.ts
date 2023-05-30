@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { SharedService } from './sharedServices';
 @Injectable()
 export class SignInService {
-  client_id: string = '9ccff3ee-5775-405b-9871-7f1c27ac24e5';
+  client_id: string = '90ee27c1-08e6-4771-addd-fdbe94881b67';
   client_secret: string = '';
   scope: string = 'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes';
   grant_type: string = 'client_credentials';
@@ -48,8 +48,8 @@ export class SignInService {
       'scope',
       'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes'
     );
-    body.set('client_id', '9ccff3ee-5775-405b-9871-7f1c27ac24e5');
-    body.set('client_secret', 'IXIkfiITQzb17jY42i0+YA==');
+    body.set('client_id', '90ee27c1-08e6-4771-addd-fdbe94881b67');
+    body.set('client_secret', 'x891sq1cn3kT5TKwZGj/VA==');
 
     let options = {
       headers: new HttpHeaders().set(

@@ -24,7 +24,7 @@ export class Consult {
 
   getBody() {
     return {
-      token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
+      token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
       tipo_comprobante: this.codComp,
       serie: this.numeroSerie,
       numero: this.numero,

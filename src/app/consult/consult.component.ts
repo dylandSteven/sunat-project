@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Consult } from '../core/services/consults';
-import { Observable, catchError, delay, retry, tap, throwError } from 'rxjs';
+import { Observable, async, catchError, delay, retry, tap, throwError } from 'rxjs';
 import { SharedService } from '../core/services/sharedServices';
 import { response } from '../core/services/response';
 import * as XLSX from 'xlsx';
@@ -31,12 +31,12 @@ export class ConsultComponent {
   listConsult: consultList = new consultList([]);
   result: response[] = new Array();
   API_KEY = history.state.data;
-   data = []=new Array();
+  data = ([] = new Array());
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      // 'Access-Control-Allow-Origin': '*',
       Authorization: 'Bearer ' + this.API_KEY,
     }),
   };
@@ -107,9 +107,46 @@ export class ConsultComponent {
 
     // console.log(this.consults);
   }
+  oneConsult() {
+    this.http
+      .post(
+        'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes/20606079932/validarcomprobante',
+        {
+          codComp: '01',
+          numeroSerie: 'F001',
+          numero: '446',
+          fechaEmision: '10/04/2023',
+          numRuc: '20606079932',
+          monto: '0',
+        },
+        this.httpOptions
+      )
+      .subscribe((data) => {
+        console.log(data);
+      });
 
-  sendData() {
-    console.log(this.data);
+
+      this.http
+      .post(
+        'https://api.migo.pe/api/v1/cpe',
+        {
+          "token": "LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR",
+          "ruc_emisor": "20499709944",
+          "tipo_comprobante": "01",
+          "serie": "F001",
+          "numero": "446",
+          "fecha_emision": "10/04/2023",
+          "monto": "0.00"
+        },
+        this.httpOptions
+      )
+      .subscribe((data) => {
+        console.log(data);
+      });
+  }
+
+  async sendData() {
+    // console.log(this.data);
     // this.listConsult.getList().forEach((element) => {
     //   let options = {
     //     method: 'POST',
@@ -134,36 +171,35 @@ export class ConsultComponent {
     // });
 
 
-    this.data.forEach((element) => {
-      console.log(element);
-      this.makePost(element);
-      // this.http
-      //   .post('https://api.migo.pe/api/v1/cpe', data, this.httpOptions)
-      //   .pipe(retry(3), catchError(this.handleError))
-      //   .subscribe((data) => {
-      //     console.log(element);
-      //     console.log(data);
 
-      //     // this.result.push(data);
-      //   });
+    // this.data.forEach( (element) => {
+    //   // console.log(element);
+    //   await this.makePost(element);
+
+    // });
+    this.data.forEach(async (element) => {
+      const res = await this.makePost(element);
+      console.log(res);
     });
   }
-  makePost(data: {}) {
-    this.http
+
+
+   makePost(data: {}){
+    return new Promise(response => {
+      this.http
       .post('https://api.migo.pe/api/v1/cpe', data, this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe((data) => {
         console.log(data);
-
-        // this.result.push(data);
       });
-  }
+    })
+    }
   tryMigo() {
     console.log('tryMigo');
 
     let data2 = [
       {
-        token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
+        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
         ruc_emisor: '20499709944',
         tipo_comprobante: '01',
         serie: 'F001',
@@ -172,7 +208,7 @@ export class ConsultComponent {
         monto: '0.00',
       },
       {
-        token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
+        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
         ruc_emisor: '20499709944',
         tipo_comprobante: '01',
         serie: 'F001',
@@ -181,7 +217,7 @@ export class ConsultComponent {
         monto: '0.00',
       },
       {
-        token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
+        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
         ruc_emisor: '20499709944',
         tipo_comprobante: '01',
         serie: 'F001',
@@ -192,42 +228,42 @@ export class ConsultComponent {
     ];
     let data = [
       {
-        codComp: '01',
-        numeroSerie: 'B002',
-        numero: '92792',
-        fechaEmision: '10/04/2023',
-        numRuc: '20609060469',
-        monto: '3.9',
-      },
-      {
-        codComp: '01',
-        numeroSerie: 'B002',
-        numero: '92792',
-        fechaEmision: '10/04/2023',
-        numRuc: '20609060469',
-        monto: '3.9',
-      },
-      {
-        codComp: '01',
-        numeroSerie: 'B002',
-        numero: '92792',
-        fechaEmision: '10/04/2023',
-        numRuc: '20609060469',
-        monto: '3.9',
-      },
+
+        "codComp":"01",
+        "numeroSerie":"F001",
+        "numero":"20304",
+        "fechaEmision":"10/04/2023",
+        "numRuc":"20499709944",
+        "monto":"3.9"
+    },
+    {
+
+      "codComp":"01",
+      "numeroSerie":"F001",
+      "numero":"20304",
+      "fechaEmision":"10/04/2023",
+      "numRuc":"20499709944",
+      "monto":"3.9"
+  },
     ];
-    data2.forEach((element) => {
+    // data2.forEach((element) => {
+    //   this.http
+    //     .post('https://api.migo.pe/api/v1/cpe', element, this.httpOptions)
+    //     .subscribe((data) => {
+    //       console.log(data);
+    //     });
+    // });
+    this.listConsult.getList().forEach((element,i) => {
       this.http
-        .post('https://api.migo.pe/api/v1/cpe', element, this.httpOptions)
+        .post(
+          'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes/' +
+            element.numRuc +
+            '/validarcomprobante',
+          element,
+          this.httpOptions
+        )
         .subscribe((data) => {
-          console.log(data);
-        });
-    });
-    data.forEach((element) => {
-      this.http
-        .post('https://api.sunat.gob.pe/v1/contribuyente/contribuyentes/'+element.numRuc+'/validarcomprobante', element, this.httpOptions)
-        .subscribe((data) => {
-          console.log(data);
+          console.log(i,data);
         });
     });
   }

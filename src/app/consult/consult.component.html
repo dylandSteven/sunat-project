@@ -2,11 +2,14 @@
   <label id="lbl">Code </label>
   <input accept=".txt" type="file" (change)="fileChanged($event)"/>
   <br>
+  <button mat-raised-button color="accent"  (click)="oneConsult()">OneConsult</button>
+  <br>
   <button mat-raised-button color="accent"  (click)="sendData()">Send data</button>
   <br>
+  <button mat-raised-button color="accent" (click)="tryMigo()">TRY MIGO</button>
+
   <button mat-raised-button (click)="exportXLSX()">Export XLSX</button>
   <br>
-  <button mat-raised-button (click)="tryMigo()">TRY MIGO</button>
 
 
 </div>
