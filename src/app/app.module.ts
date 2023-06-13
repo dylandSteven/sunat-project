@@ -19,6 +19,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ConsultComponent } from './consult/consult.component';
 import { HttpClientModule } from '@angular/common/http';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatSelectModule,
     BrowserModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatAutocompleteModule,

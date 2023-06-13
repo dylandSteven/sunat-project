@@ -1,20 +1,21 @@
-<div class="Block">
-  <label id="lbl">Code </label>
-  <input accept=".txt" type="file" (change)="fileChanged($event)"/>
-  <br>
-  <button mat-raised-button color="accent"  (click)="oneConsult()">OneConsult</button>
-  <br>
-  <button mat-raised-button color="accent"  (click)="sendData()">Send data</button>
-  <br>
-  <button mat-raised-button color="accent" (click)="tryMigo()">TRY MIGO</button>
-
-  <button mat-raised-button (click)="exportXLSX()">Export XLSX</button>
-  <br>
-
-
+<div class=".center " *ngIf="exportando == true">
+  <mat-progress-bar class="_mat-animation-noopable" [value]="valueProgress"></mat-progress-bar>
+</div>
+<div *ngIf="exportando == false">
+  <div class="Block">
+    <label id="lbl">Code </label>
+    <input accept=".txt" type="file" (change)="fileChanged($event)" />
+    <br />
+    <button mat-raised-button color="accent" (click)="sendData()">
+      Send data
+    </button>
+      <button mat-raised-button color="primary" (click)="exportXLSX()">
+        Exportar
+      </button>
+  </div>
+  <div>
+    <h3>File Content</h3>
+    <pre>{{ text }} </pre>
+  </div>
 </div>
 
-<div>
-  <h3>File Content</h3>
-  <pre>{{text}} </pre>
-</div>

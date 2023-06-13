@@ -5,34 +5,45 @@ import {
 } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Consult } from '../core/services/consults';
-import { Observable, async, catchError, delay, retry, tap, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { SharedService } from '../core/services/sharedServices';
 import { response } from '../core/services/response';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { FileSaverService } from 'ngx-filesaver';
-import * as e from 'express';
 import * as $ from 'jquery'; // import Jquery here
 import { consultList } from '../core/services/consults_list';
-
+import * as _ from 'lodash';
+import { DataResponse } from '../core/services/DataResponse';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-consult',
   templateUrl: './consult.component.html',
   styleUrls: ['./consult.component.sass'],
 })
 export class ConsultComponent {
-  constructor(private http: HttpClient, private filerSaver: FileSaverService) {}
+  constructor(
+    private http: HttpClient,
+    private filerSaver: FileSaverService,
+    private shared: SharedService,
+    private router: Router
+  ) {}
+  myMap = new Map<any, any>();
   configUrl = 'https://api.migo.pe/api/v1/cpe';
   message: string;
+  stop = false;
   ruc: string = '20499709944';
   fileContent: FileReader;
   file: any;
+  parts: any;
   text: string;
+  valueProgress: number =0;
   listConsult: consultList = new consultList([]);
-  result: response[] = new Array();
   API_KEY = history.state.data;
-  data = ([] = new Array());
-
+  results = new Array<response>();
+  data = new Array();
+  exportando: boolean = false;
+  dataDivided = new Array();
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -41,13 +52,39 @@ export class ConsultComponent {
     }),
   };
 
+  changeValue(value: any) {
+    value = true;
+  }
+
+  ngOnInit() {
+    if (this.API_KEY == undefined) {
+      this.router.navigate(['signin']);
+    }
+  }
+  private splitListIntoParts<Consult>(list: any, size: number): Consult[][] {
+    const result: Consult[][] = [];
+    for (let i = 0; i < list.length; i += size) {
+      const part = list.slice(i, i + size);
+      result.push(part);
+    }
+    return result;
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
+      this.exportXLSX();
+      this.changeValue(this.stop);
       console.error('An error occurred:', error.error);
+
+      if (this.stop == true) {
+        console.log('stop');
+      } else {
+        console.log('continue');
+      }
+    } else if (error.status === 401) {
+      console.log('Unauthorized');
+      this.router.navigate(['signin']);
     } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
       console.error(
         `Backend returned code ${error.status}, body was: `,
         error.error
@@ -59,29 +96,83 @@ export class ConsultComponent {
     );
   }
 
+  private makePost(data: any, numRuc: string, i: number) {
+    return this.http
+      .post<response>(
+        'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes/' +
+          numRuc +
+          '/validarcomprobante',
+        data,
+        this.httpOptions
+      )
+      .pipe(catchError(this.handleError))
+      .subscribe((res) => {
+        console.log(i, res);
+        if (res.message == 'Operation Success! ') {
+          res.message = 'Operación exitosa';
+          let respuesta: string;
+          let estado = res.data.estadoCp;
+          switch (estado) {
+            case '0':
+              respuesta = 'NO EXISTE';
+              break;
+            case '1':
+              respuesta = 'ACEPTADO';
+              break;
+            case '2':
+              respuesta = 'ANULADO';
+              break;
+            case '3':
+              respuesta = 'AUTORIZADO';
+              break;
+            case '4':
+              respuesta = 'NO AUTORIZADO';
+              break;
+            default:
+              respuesta = 'NO EXISTE';
+              break;
+          }
+          this.myMap.set(
+            i,
+            new response(
+              new DataResponse(
+                res.data.estadoCp,
+                res.data.observaciones,
+                respuesta
+              ),
+              res.message,
+              res.success
+            )
+          );
+        }
+      });
+  }
+
   fileChanged(e: Event) {
     const target = e.target as HTMLInputElement;
     this.file = (target.files as FileList)[0];
     let fileReader = new FileReader();
     fileReader.onload = (e) => {
-      fileReader.result;
       this.finalAnswer(fileReader.result);
     };
     fileReader.readAsText(this.file);
   }
 
   finalAnswer(data: any) {
+    this.data = [];
     this.listConsult = new consultList([]);
     this.text = data;
-    const newText = data.split('\n');
+    let newText = data.split('\n');
     if (newText[newText.length - 1] == '') {
       newText.pop();
     }
+    let indice = 0;
     newText.forEach((element: any) => {
       let newElement = element.split('|');
-      let number = newElement[2].replace('M', '');
+      let number = Number(newElement[7]).toString();
       this.listConsult.push(
         new Consult(
+          indice,
           newElement[10],
           newElement[5],
           newElement[6],
@@ -90,23 +181,14 @@ export class ConsultComponent {
           newElement[24]
         )
       );
-      // this.consults.push(
-      //   new Consult(
-      //     newElement[10],
-      //     newElement[5],
-      //     newElement[6],
-      //     number,
-      //     newElement[3],
-      //     newElement[24]
-      //   )
-      // );
+      indice++;
     });
     this.listConsult.getList().forEach((element) => {
-      this.data.push(element.getBody());
+      this.data.push(element.getBody2());
     });
-
-    // console.log(this.consults);
+    this.parts = this.splitListIntoParts(this.data, 800);
   }
+
   oneConsult() {
     this.http
       .post(
@@ -125,18 +207,17 @@ export class ConsultComponent {
         console.log(data);
       });
 
-
-      this.http
+    this.http
       .post(
         'https://api.migo.pe/api/v1/cpe',
         {
-          "token": "LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR",
-          "ruc_emisor": "20499709944",
-          "tipo_comprobante": "01",
-          "serie": "F001",
-          "numero": "446",
-          "fecha_emision": "10/04/2023",
-          "monto": "0.00"
+          token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
+          ruc_emisor: '20499709944',
+          tipo_comprobante: '01',
+          serie: 'F001',
+          numero: '446',
+          fecha_emision: '10/04/2023',
+          monto: '0.00',
         },
         this.httpOptions
       )
@@ -144,153 +225,67 @@ export class ConsultComponent {
         console.log(data);
       });
   }
+  delay = (ms: number | undefined) => new Promise((res) => setTimeout(res, ms));
 
   async sendData() {
-    // console.log(this.data);
-    // this.listConsult.getList().forEach((element) => {
-    //   let options = {
-    //     method: 'POST',
-    //     headers: {
-    //       accept: 'application/json',
-    //       'content-type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       token: 'syuIqRryIyu9CQYL3RmNPu8t9F0O7MpCF1NRhP2Ynqtdrjg8aZ73XsZdO3UR',
-    //       ruc_emisor: element.numRuc,
-    //       tipo_comprobante: element.codComp,
-    //       serie: element.numeroSerie,
-    //       numero: element.numero,
-    //       fecha_emision: element.fechaEmision,
-    //       monto: element.monto,
-    //     }),
-    //   };
-    //   fetch('https://api.migo.pe/api/v1/cpe', options)
-    //     .then((response) => response.json())
-    //     .then((response) => console.log(response))
-    //     .catch((err) => console.error(err));
-    // });
+    console.log('Enviando datos...');
+    console.log(this.parts);
+    try {
+      for (let j = 0; j < this.data.length; j++) {
+        this.exportando = true;
+//function mathematica para que todas las partes al ser sumadas finalizar llegue a 100
 
-
-
-    // this.data.forEach( (element) => {
-    //   // console.log(element);
-    //   await this.makePost(element);
-
-    // });
-    this.data.forEach(async (element) => {
-      const res = await this.makePost(element);
-      console.log(res);
-    });
-  }
-
-
-   makePost(data: {}){
-    return new Promise(response => {
-      this.http
-      .post('https://api.migo.pe/api/v1/cpe', data, this.httpOptions)
-      .pipe(catchError(this.handleError))
-      .subscribe((data) => {
-        console.log(data);
-      });
-    })
+        this.valueProgress += (100/this.data.length)
+        if (this.stop == true) {
+          break;
+        }
+        // for (let i = 0; i < this.parts[j].length; i++) {
+        this.makePost(this.data[j], this.data[j].numRuc, j);
+        console.log(this.valueProgress);
+        await this.delay(300);
+      }
+    } catch (e) {
+      alert('No hay data para enviar');
     }
-  tryMigo() {
-    console.log('tryMigo');
+    await this.delay(1000);
+    this.exportando = false;
 
-    let data2 = [
-      {
-        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
-        ruc_emisor: '20499709944',
-        tipo_comprobante: '01',
-        serie: 'F001',
-        numero: '446',
-        fecha_emision: '10/04/2023',
-        monto: '0.00',
-      },
-      {
-        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
-        ruc_emisor: '20499709944',
-        tipo_comprobante: '01',
-        serie: 'F001',
-        numero: '446',
-        fecha_emision: '10/04/2023',
-        monto: '0.00',
-      },
-      {
-        token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
-        ruc_emisor: '20499709944',
-        tipo_comprobante: '01',
-        serie: 'F001',
-        numero: '446',
-        fecha_emision: '10/04/2023',
-        monto: '0.00',
-      },
-    ];
-    let data = [
-      {
-
-        "codComp":"01",
-        "numeroSerie":"F001",
-        "numero":"20304",
-        "fechaEmision":"10/04/2023",
-        "numRuc":"20499709944",
-        "monto":"3.9"
-    },
-    {
-
-      "codComp":"01",
-      "numeroSerie":"F001",
-      "numero":"20304",
-      "fechaEmision":"10/04/2023",
-      "numRuc":"20499709944",
-      "monto":"3.9"
-  },
-    ];
-    // data2.forEach((element) => {
-    //   this.http
-    //     .post('https://api.migo.pe/api/v1/cpe', element, this.httpOptions)
-    //     .subscribe((data) => {
-    //       console.log(data);
-    //     });
-    // });
-    this.listConsult.getList().forEach((element,i) => {
-      this.http
-        .post(
-          'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes/' +
-            element.numRuc +
-            '/validarcomprobante',
-          element,
-          this.httpOptions
-        )
-        .subscribe((data) => {
-          console.log(i,data);
-        });
-    });
   }
+
+  //example of generic function to make a request to the api and get the response and handle the error to cut the loop
 
   exportXLSX() {
-    let final = [{}];
-    // let consultObject: [{}] = [{}];
-    // this.consults.forEach((element) => {
-    //   consultObject.push(JSON.parse(element.getBody()));
-    // });
-    // if (Object.keys(consultObject[0])) {
-    //   consultObject.shift();
-    // }
-    // consultObject.forEach((element, i) => {
-    //   final.push($.extend({}, element, this.result[i]));
-    // });
+    this.exportando = false;
 
-    this.listConsult.getList().forEach((element, i) => {
-      {
-        final.push($.extend({}, element.getBody(), this.result[i]));
-      }
-    });
+    console.log('Exportando...');
+    const sortedAsc = new Map([...this.myMap].sort((a, b) => a[0] - b[0]));
+    let final = [{}];
+    const Heading = [
+      [
+        'Indice',
+        'Ruc Emisor',
+        'Tipo de comprobante',
+        'Serie',
+        'Numero',
+        'Fecha de emision',
+        'Importe Total ',
+        'Respuesta Sunat',
+      ],
+    ];
+    for (let [key, value] of sortedAsc) {
+      final.push(
+        $.extend(
+          {},
+          this.listConsult.getList()[key].getBody(),
+          value.getObjet()
+        )
+      );
+    }
     const EXCEL_TYPE =
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const EXCEL_EXTENSION = '.xlsx';
-
     const worksheet = XLSX.utils.json_to_sheet(final);
+    XLSX.utils.sheet_add_aoa(worksheet, Heading);
     const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
 
     const excelBuffer: any = XLSX.write(workbook, {

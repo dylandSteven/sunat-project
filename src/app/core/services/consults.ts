@@ -1,4 +1,5 @@
 export class Consult {
+  id: number;
   numRuc: string;
   codComp: string;
   numeroSerie: string;
@@ -7,6 +8,7 @@ export class Consult {
   monto: string;
 
   constructor(
+    id: number,
     numRuc: string,
     codComp: string,
     numeroSerie: string,
@@ -14,6 +16,7 @@ export class Consult {
     fechaEmision: string,
     monto: string
   ) {
+    this.id = id;
     this.numRuc = numRuc;
     this.codComp = codComp;
     this.numeroSerie = numeroSerie;
@@ -22,25 +25,25 @@ export class Consult {
     this.monto = monto;
   }
 
-  getBody() {
-    return {
-      token: 'LW3hA7yHiPzp7iKNYp93RDdjD8lzjzCal8AudXLzpDxD9Cxl1lFfulabQPIR',
-      tipo_comprobante: this.codComp,
-      serie: this.numeroSerie,
-      numero: this.numero,
-      fecha_emision: this.fechaEmision,
-      ruc_emisor: this.numRuc,
-      monto: this.monto,
-    };
-  }
+
   getBody2() {
-    return JSON.stringify({
+    return {
+      numRuc: this.numRuc,
       codComp: this.codComp,
       numeroSerie: this.numeroSerie,
       numero: this.numero,
       fechaEmision: this.fechaEmision,
-      numRuc: this.numRuc,
       monto: this.monto,
-    });
+    }
+  }getBody() {
+    return {
+      id: this.id+1,
+      numRuc: this.numRuc,
+      codComp: this.codComp,
+      numeroSerie: this.numeroSerie,
+      numero: this.numero,
+      fechaEmision: this.fechaEmision,
+      monto: this.monto,
+    }
   }
 }

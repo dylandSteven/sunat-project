@@ -2,4 +2,20 @@ button {
   background-color: #218e42;
   margin: 10px;
 }
+
+.center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #218e42;
+  height: 100vh;
+}
+
+._mat-animation-noopable {
+  margin: auto;
+  margin-top: 50vh;
+}
 /*# sourceMappingURL=consult.component.css.map */
