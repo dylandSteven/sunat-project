@@ -1,1 +1,21 @@
-/* No CSS *//*# sourceMappingURL=signin.component.css.map */
+.body {
+  background: #a86666;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+span {
+  padding-right: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text-invisible {
+  opacity: 0;
+}/*# sourceMappingURL=signin.component.css.map */

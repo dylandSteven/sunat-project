@@ -1,9 +1,1 @@
-{
-    "version": 3,
-    "mappings": "AAGA,AAAA,IAAI,CAAC;EACH,IAAI,EAAE,IAAI,CAJC,SAAS,EAAE,UAAU;EAKhC,KAAK,EAJS,IAAI;CAIM",
-    "sources": [
-        "app.component.sass"
-    ],
-    "names": [],
-    "file": "app.component.css"
-}
+{"version":3,"sources":["app.component.sass","app.component.css"],"names":[],"mappings":"AAGA;EACE,gCAAA;EACA,WAJc;ACEhB","file":"app.component.css"}

@@ -1,9 +1,1 @@
-{
-    "version": 3,
-    "mappings": "",
-    "sources": [
-        "auth.component.sass"
-    ],
-    "names": [],
-    "file": "auth.component.css"
-}
+{"version":3,"sources":[],"names":[],"mappings":"","file":"auth.component.css"}

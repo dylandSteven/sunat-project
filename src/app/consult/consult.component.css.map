@@ -1,9 +1,1 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,MAAM,CAAC;EACL,gBAAgB,EAAE,OAAO;EACzB,MAAM,EAAE,IAAI;CAAG;;AACjB,AAAA,OAAO,CAAC;EACN,OAAO,EAAE,IAAI;EACb,eAAe,EAAE,MAAM;EACvB,gBAAgB,EAAE,OAAO;EACzB,MAAM,EAAE,KAAK;CAAG;;AAElB,AAAA,wBAAwB,CAAC;EACvB,MAAM,EAAE,IAAI;EACV,UAAG,EAAE,IAAI;CAAK",
-    "sources": [
-        "consult.component.sass"
-    ],
-    "names": [],
-    "file": "consult.component.css"
-}
+{"version":3,"sources":["consult.component.sass","consult.component.css"],"names":[],"mappings":"AAAA;EAEE,YAAA;ACAF;;ADCA;EACE,aAAA;EACA,uBAAA;EAEA,aAAA;ACCF;;ADCA;EACE,YAAA;EACE,gBAAA;ACEJ;;ADAA;EACE,WAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,yBAAA;EACA,6BAAA;EACA,kCAAA;ACGF;;ADFA;EACE;IACE,uBAAA;ECKF;EDHA;IACE,yBAAA;ECKF;AACF","file":"consult.component.css"}

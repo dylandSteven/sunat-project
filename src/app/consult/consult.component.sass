@@ -1,12 +1,28 @@
 button
-  background-color: #218e42
-  margin: 10px
+  // background-color: #218e42
+  margin:10px
 .center
   display: flex
   justify-content: center
-  background-color: #218e42
+  // background-color: #218e42
   height: 100vh
 
 ._mat-animation-noopable
   margin: auto
     top: 50vh
+
+.spinner
+  width: 40px
+  height: 40px
+  margin: 0 auto
+  border-radius: 50%
+  border: 4px solid #f3f3f3
+  border-top: 4px solid #3498db
+  animation: spin 1s linear infinite
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+
+  100%
+    transform: rotate(360deg)
+

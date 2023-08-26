@@ -4,11 +4,12 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import {  throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Data } from '@angular/router';
 import { Router } from '@angular/router';
 import { SharedService } from './sharedServices';
+import { Entidad } from 'src/app/shared/models/entidad';
 @Injectable()
 export class SignInService {
   client_id: string = '90ee27c1-08e6-4771-addd-fdbe94881b67';
@@ -20,7 +21,11 @@ export class SignInService {
     this.client_id +
     '/oauth2/token/';
 
-  constructor(private http: HttpClient, private router: Router,private shared:SharedService) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private shared: SharedService
+  ) {}
   @Output() login = new EventEmitter<string>();
 
   private handleError(error: HttpErrorResponse) {
@@ -40,16 +45,18 @@ export class SignInService {
       () => new Error('Something bad happened; please try again later.')
     );
   }
-  @Output() token: EventEmitter<any> = new EventEmitter();
-  getToken() {
+  // @Output() token: EventEmitter<any> = new EventEmitter();
+  @Output() numRuc: EventEmitter<any> = new EventEmitter();
+
+  async getToken(entidad: Entidad, bool: boolean) {
     const body = new URLSearchParams();
     body.set('grant_type', 'client_credentials');
     body.set(
       'scope',
       'https://api.sunat.gob.pe/v1/contribuyente/contribuyentes'
     );
-    body.set('client_id', '90ee27c1-08e6-4771-addd-fdbe94881b67');
-    body.set('client_secret', 'x891sq1cn3kT5TKwZGj/VA==');
+    body.set('client_id', entidad.id);
+    body.set('client_secret', entidad.clave);
 
     let options = {
       headers: new HttpHeaders().set(
@@ -58,21 +65,33 @@ export class SignInService {
       ),
     };
     return this.http
-      .post<Data>(this.configUrl, body, options)
+      .post<Data>('https://api-seguridad.sunat.gob.pe/v1/clientesextranet/' +
+      entidad.id +
+      '/oauth2/token/', body, options)
       .pipe(catchError(this.handleError))
       .subscribe((data) => {
         console.log(data['access_token']);
+        console.log(bool);
+
         if (data['access_token']) {
-          this.login.emit(data['access_token']);
-          this.router.navigate(['consult'],{state:{data:data['access_token']}});
+          // this.login.emit(data['access_token']);
+          // if (bool == true) {
+            this.numRuc.emit(entidad.ruc),
+            this.router.navigate(['consult'], {
+              state: { data: data['access_token'], numRuc: entidad.ruc,name:entidad.name },
+            });
+          // } else {
+          //   this.router.navigate(['consult'], {
+          //     state: { data: data['access_token'] },
+          //   });
+          // }
+
           this.shared.setToken(data['access_token']);
+          // this.numRuc.emit(this.shared.getNumRuc());
         }
       });
   }
   getData(client_id: string, secret_id: string) {
-    // this.client_id = client_id
-    // this.client_secret = secret_id;
-    // console.log(this.configUrl);
     return this.http.get(this.configUrl).subscribe(
       (data) => {
         console.log(data);

@@ -1,7 +1,35 @@
-<div class=".center " *ngIf="exportando == true">
-  <mat-progress-bar class="_mat-animation-noopable" [value]="valueProgress"></mat-progress-bar>
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Validador de comprobantes - Sunat</span>
+    <span>v1</span>
+  </mat-toolbar-row></mat-toolbar
+>
+<p></p>
+<div *ngIf="existRuc == false || existRuc == undefined; else elseBlock">
+  <h1>COMPROBANTE DE COMPRA</h1>
 </div>
-<div *ngIf="exportando == false">
+<ng-template #elseBlock>
+  <h1>COMPROBANTE DE VENTA</h1>
+
+  <h2>{{ nameCompany }}</h2>
+  <h2>Numero de Ruc: {{ numRuc }}</h2>
+</ng-template>
+<p></p>
+<div class=".center" *ngIf="exportando == true; else initialBloc">
+  <mat-progress-bar
+    class="_mat-animation-noopable"
+    [value]="valueProgress"
+  ></mat-progress-bar>
+  <button mat-raised-button (click)="cancel()">Cancel</button>
+  <div class=".center" *ngIf="stop == true">
+    <h2>ERROR</h2>
+  </div>
+</div>
+
+<ng-template #initialBloc>
   <div class="Block">
     <label id="lbl">Code </label>
     <input accept=".txt" type="file" (change)="fileChanged($event)" />
@@ -9,13 +37,28 @@
     <button mat-raised-button color="accent" (click)="sendData()">
       Send data
     </button>
-      <button mat-raised-button color="primary" (click)="exportXLSX()">
-        Exportar
-      </button>
+    <button mat-raised-button color="primary" (click)="exportXLSX()">
+      Exportar
+    </button>
   </div>
   <div>
+    <div *ngIf="isLoading">
+      <div class="spinner"></div>
+    </div>
     <h3>File Content</h3>
+
     <pre>{{ text }} </pre>
   </div>
-</div>
+</ng-template>
 
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="goCompras()">Comprobantes de Compra</button>
+  <button mat-menu-item (click)="goVentas()">Comprobantes de Venta</button>
+  <button
+    mat-raised-button
+    color="warn"
+    style="display: inline-block; width: 100%"
+  >
+    Cerrar sesion
+  </button>
+</mat-menu>

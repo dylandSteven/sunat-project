@@ -1,9 +1,1 @@
-{
-    "version": 3,
-    "mappings": "",
-    "sources": [
-        "signin.component.sass"
-    ],
-    "names": [],
-    "file": "signin.component.css"
-}
+{"version":3,"sources":["signin.component.sass","signin.component.css"],"names":[],"mappings":"AAGA;EACE,mBAFgB;EAGhB,aAAA;EACA,aAAA;EACA,mBAAA;EACA,uBAAA;ACFF;;ADIA;EACE,mBAAA;ACDF;;ADGA;EACE,aAAA;EACA,sBAAA;EACA,mBAAA;ACAF;;ADEA;EACE,UAAA;ACCF","file":"signin.component.css"}

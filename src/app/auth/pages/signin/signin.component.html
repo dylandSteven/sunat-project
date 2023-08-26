@@ -1,15 +1,34 @@
-<div>
-  <form  [formGroup]="formdata" (ngSubmit)="onClickSubmit(formdata)" class="example-form" >
-    <mat-form-field>
-      <mat-label>Client ID</mat-label>
-      <input type="text" formControlName="clientId" matInput placeholder="c04864ce-f454-48e1-b41d-8730e575b905" value="" />
-    </mat-form-field>
+<!-- <mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Validador de comprobantes - Sunat</span>
+    <span>v1</span>
+  </mat-toolbar-row></mat-toolbar
+> -->
 
+<div class="body">
+  <form
+    [formGroup]="formdata"
+    (ngSubmit)="onClickSubmit(formdata)"
+    class="example-form"
+  >
     <mat-form-field>
-      <mat-label>Client Secret</mat-label>
-      <input type="password" formControlName="secretId" matInput placeholder="OpzHz4pn8D1frRrv5iDkIA==" value="" />
+      <mat-label>Entidad</mat-label>
+      <mat-select formControlName="selected2">
+        <mat-option *ngFor="let food of data" [value]="food">
+          {{ food.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
-
-    <button type="submit" class="forsubmit" mat-raised-button color="primary">Send Data</button>
+    <!-- <mat-checkbox [formControl]="hideRequiredControl"
+      >Numero Ruc Emisor</mat-checkbox
+    > -->
+    <br />
+    <button type="submit" class="forsubmit" mat-raised-button color="primary">
+      Ingresar
+    </button>
   </form>
 </div>
+

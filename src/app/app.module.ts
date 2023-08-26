@@ -20,6 +20,14 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ConsultComponent } from './consult/consult.component';
 import { HttpClientModule } from '@angular/common/http';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { DialogAnimationsExampleDialog } from './core/services/Dialog';
+import {MatMenuModule} from '@angular/material/menu';  
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -28,10 +36,13 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     SigninComponent,
     SignupComponent,
     ConsultComponent,
-
-
   ],
   imports: [
+    MatListModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    DialogAnimationsExampleDialog,
     MatSelectModule,
     BrowserModule,
     MatFormFieldModule,
@@ -42,6 +53,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     FormsModule,
     ReactiveFormsModule,
     MatDividerModule,
+    MatRadioModule,
     MatButtonModule,
     MatIconModule,
     MatNativeDateModule,
@@ -50,6 +62,9 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatGridListModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MatSlideToggleModule,
+    MatCheckboxModule
+
 
   ],
   providers: [],

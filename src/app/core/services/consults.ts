@@ -25,25 +25,26 @@ export class Consult {
     this.monto = monto;
   }
 
+  getBody() {
+    return {
+      numRuc: this.numRuc,
+      codComp: this.codComp,
+      numeroSerie: this.numeroSerie,
+      numero: this.numero,
+      fechaEmision: this.fechaEmision,
+      monto: this.monto,
+    };
+  }
 
-  getBody2() {
+  getBodyWithIndice() {
     return {
+      id: this.id + 1,
       numRuc: this.numRuc,
       codComp: this.codComp,
       numeroSerie: this.numeroSerie,
       numero: this.numero,
       fechaEmision: this.fechaEmision,
       monto: this.monto,
-    }
-  }getBody() {
-    return {
-      id: this.id+1,
-      numRuc: this.numRuc,
-      codComp: this.codComp,
-      numeroSerie: this.numeroSerie,
-      numero: this.numero,
-      fechaEmision: this.fechaEmision,
-      monto: this.monto,
-    }
+    };
   }
 }
