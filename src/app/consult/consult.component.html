@@ -32,7 +32,7 @@
 <ng-template #initialBloc>
   <div class="Block">
     <label id="lbl">Code </label>
-    <input accept=".txt" type="file" (change)="fileChanged($event)" />
+    <input accept=".xlsx" type="file" (change)="fileChanged($event)" />
     <br />
     <button mat-raised-button color="accent" (click)="sendData()">
       Send data
